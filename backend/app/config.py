@@ -21,15 +21,15 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api/v1"
     
     # Database
-    DATABASE_URL: str = "sqlite:///./resume_intelligence.db"
+    DATABASE_URL: str = "sqlite:////tmp/resume_intelligence.db"
     
     # File Upload
-    UPLOAD_DIR: Path = Path("uploads")
+    UPLOAD_DIR: Path = Path("/tmp/uploads")
     MAX_UPLOAD_SIZE: int = 10 * 1024 * 1024  # 10MB
     ALLOWED_EXTENSIONS: set = {".pdf", ".docx", ".doc"}
     
     # AI Models
-    EMBEDDINGS_DIR: Path = Path("embeddings")
+    EMBEDDINGS_DIR: Path = Path("/tmp/embeddings")
     SENTENCE_TRANSFORMER_MODEL: str = "all-MiniLM-L6-v2"  # Fast and efficient
     SPACY_MODEL: str = "en_core_web_sm"
     
@@ -59,6 +59,9 @@ class Settings(BaseSettings):
 # Create settings instance
 settings = Settings()
 
-# Create necessary directories
-settings.UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-settings.EMBEDDINGS_DIR.mkdir(parents=True, exist_ok=True)
+# Create necessary directories (only if writable)
+try:
+    settings.UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    settings.EMBEDDINGS_DIR.mkdir(parents=True, exist_ok=True)
+except Exception:
+    pass  # Directories will be created at runtime
