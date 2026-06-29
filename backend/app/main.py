@@ -29,10 +29,27 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")
     
+    # Create necessary directories
+    try:
+        from pathlib import Path
+        upload_dir = Path(settings.UPLOAD_DIR)
+        upload_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Upload directory ready: {upload_dir}")
+        
+        embeddings_dir = Path(settings.EMBEDDINGS_DIR)
+        embeddings_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Embeddings directory ready: {embeddings_dir}")
+    except Exception as e:
+        logger.error(f"Error creating directories: {e}")
+    
     # Initialize database
     logger.info("Initializing database...")
-    init_db()
-    logger.info("Database initialized successfully")
+    try:
+        init_db()
+        logger.info("Database initialized successfully")
+    except Exception as e:
+        logger.error(f"Database initialization failed: {e}")
+        raise
     
     # Download AI models if needed
     try:
