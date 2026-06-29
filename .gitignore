@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/backend/venv/
+backend/venv/
+env/
+venv/
+ENV/
+*.egg-info/
+.pytest_cache/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads (optional - include if you want to deploy with sample resumes)
+backend/uploads/
+
+# Logs
+*.log
+backend/server.out.log
+backend/server.err.log
+frontend/vite.out.log
+frontend/vite.err.log
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Node
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+$null
+
+# Build
+build/
+dist/
+*.egg
+
+# Temporary
+temp/
+tmp/
