@@ -46,24 +46,360 @@ Paste a job description → AI ranks ALL resumes → Download the top match!
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ System Architecture
+
+### High-Level Architecture Diagram
 
 ```
-Frontend (React + TypeScript + Vite)
-├── Tailwind CSS for styling
-├── Recharts for analytics graphs
-├── Lucide icons
-└── Axios for API calls
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           USER BROWSER                                   │
+│                    (http://localhost:5173)                               │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                                 │ HTTP Requests
+                                 ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        FRONTEND (React SPA)                              │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Framework: React 18 + TypeScript + Vite                                │
+│  ├─ UI Library: Tailwind CSS (Styling)                                  │
+│  ├─ Icons: Lucide React                                                 │
+│  ├─ Charts: Recharts (Bar, Pie, Line charts)                            │
+│  ├─ HTTP Client: Axios                                                  │
+│  └─ Routing: React Router (SPA navigation)                              │
+│                                                                          │
+│  Pages:                                                                  │
+│  ├─ Dashboard.tsx       → Overview & Stats                              │
+│  ├─ Candidates.tsx      → Manage candidates & upload                    │
+│  ├─ AllResumes.tsx      → View all resumes                              │
+│  ├─ Matching.tsx        → AI job matching                               │
+│  ├─ JDAnalyzer.tsx      → JD analytics with graphs                      │
+│  └─ Analytics.tsx       → Platform analytics                            │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                                 │ REST API Calls
+                                 │ (JSON over HTTPS)
+                                 ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    BACKEND API (FastAPI)                                 │
+│                 (http://localhost:8000)                                  │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Framework: FastAPI (Python 3.10+)                                      │
+│  ├─ Auto API Docs: Swagger UI (/docs)                                   │
+│  ├─ Validation: Pydantic Models                                         │
+│  ├─ CORS: Middleware for cross-origin                                   │
+│  └─ Logging: Python logging module                                      │
+├─────────────────────────────────────────────────────────────────────────┤
+│  API ROUTES:                                                             │
+│  ├─ /api/v1/candidates/     → CRUD operations                           │
+│  ├─ /api/v1/resumes/        → Upload, download, list                    │
+│  ├─ /api/v1/resumes/batch-upload → Bulk upload                          │
+│  ├─ /api/v1/match/          → AI matching engine                        │
+│  ├─ /api/v1/search/         → Search & filter                           │
+│  ├─ /api/v1/analytics/      → Platform statistics                       │
+│  └─ /api/v1/jd/             → JD analytics & trends                     │
+├─────────────────────────────────────────────────────────────────────────┤
+│  SERVICES LAYER:                                                         │
+│  ├─ resume_parser.py                                                    │
+│  │   ├─ PyMuPDF (PDF parsing)                                           │
+│  │   ├─ python-docx (DOCX parsing)                                      │
+│  │   └─ Regex (Extract skills, email, phone, experience)                │
+│  │                                                                       │
+│  └─ ai_matcher.py                                                       │
+│      ├─ sentence-transformers (Semantic embeddings)                     │
+│      ├─ scikit-learn (Cosine similarity)                                │
+│      ├─ numpy (Vector operations)                                       │
+│      └─ RapidFuzz (Fuzzy string matching)                               │
+├─────────────────────────────────────────────────────────────────────────┤
+│  DATA LAYER (SQLAlchemy ORM):                                           │
+│  ├─ models.py                                                           │
+│  │   ├─ Candidate Model                                                 │
+│  │   ├─ Resume Model                                                    │
+│  │   ├─ JobDescription Model                                            │
+│  │   ├─ SearchResult Model                                              │
+│  │   └─ Analytics Model                                                 │
+│  │                                                                       │
+│  └─ schemas.py (Pydantic validation schemas)                            │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                                 │ SQL Queries
+                                 ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    DATABASE (SQLite)                                     │
+│                  (resume_intelligence.db)                                │
+├─────────────────────────────────────────────────────────────────────────┤
+│  TABLES:                                                                 │
+│  ├─ candidates                                                           │
+│  │   └─ Stores candidate info (name, email, phone, location)            │
+│  │                                                                       │
+│  ├─ resumes                                                              │
+│  │   ├─ Links to candidates (candidate_id FK)                           │
+│  │   ├─ File metadata (path, size, type)                                │
+│  │   ├─ Parsed data (skills, experience, certifications)                │
+│  │   └─ JSON arrays for tech stacks                                     │
+│  │                                                                       │
+│  ├─ job_descriptions                                                     │
+│  │   ├─ JD text and metadata                                            │
+│  │   └─ Extracted tech requirements                                     │
+│  │                                                                       │
+│  ├─ search_results                                                       │
+│  │   └─ Search history and results                                      │
+│  │                                                                       │
+│  └─ analytics                                                            │
+│      └─ Platform usage metrics                                           │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                                 │ File System Access
+                                 ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    FILE STORAGE (Local Disk)                             │
+│                    (backend/uploads/)                                    │
+├─────────────────────────────────────────────────────────────────────────┤
+│  uploads/                                                                │
+│  ├─ CANDIDATE_NAME/                                                      │
+│  │   ├─ resume1.pdf                                                      │
+│  │   ├─ resume2.docx                                                     │
+│  │   └─ resume3.pdf                                                      │
+│  │                                                                       │
+│  └─ Another_Candidate/                                                   │
+│      ├─ resume_A.pdf                                                     │
+│      └─ resume_B.docx                                                    │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🔄 Data Flow Diagram
+
+### 1. Resume Upload Flow
+
+```
+User (Browser)
+    │
+    ├─→ Selects PDF/DOCX file
+    │
     ↓
-Backend (FastAPI + Python)
-├── SQLite database (no setup needed)
-├── Resume parsing (PDF/DOCX)
-├── AI matching (Sentence Transformers)
-└── RESTful API with auto-docs
+Frontend (Candidates.tsx)
+    │
+    ├─→ Creates FormData with file
+    │
     ↓
-Storage
-├── SQLite database (resume_intelligence.db)
-└── File uploads (backend/uploads/)
+POST /api/v1/resumes/upload
+    │
+    ↓
+Backend (resumes.py)
+    │
+    ├─→ Validates file type & size
+    │
+    ↓
+File Handler (file_handler.py)
+    │
+    ├─→ Saves file to uploads/CANDIDATE_NAME/
+    │
+    ↓
+Resume Parser (resume_parser.py)
+    │
+    ├─→ Extracts text (PyMuPDF/python-docx)
+    ├─→ Parses skills, experience, email, phone
+    └─→ Extracts tech stacks (Python, AWS, React, etc.)
+    │
+    ↓
+Database (SQLite)
+    │
+    └─→ Stores resume record with parsed data
+    │
+    ↓
+Response to Frontend
+    │
+    └─→ Success message + resume_id
+```
+
+---
+
+### 2. AI Job Matching Flow
+
+```
+User (Browser)
+    │
+    ├─→ Pastes Job Description
+    │
+    ↓
+Frontend (Matching.tsx)
+    │
+    ├─→ Sends JD text
+    │
+    ↓
+POST /api/v1/match/
+    │
+    ↓
+Backend (matching.py)
+    │
+    ├─→ Extracts required skills from JD
+    │
+    ↓
+AI Matcher (ai_matcher.py)
+    │
+    ├─→ Retrieves ALL resumes from database
+    ├─→ Creates embeddings (Sentence Transformers)
+    ├─→ Calculates cosine similarity
+    └─→ Ranks resumes by match score
+    │
+    ↓
+Database Query
+    │
+    └─→ Fetches resume details for top matches
+    │
+    ↓
+Response to Frontend
+    │
+    ├─→ Ranked list of resumes
+    ├─→ Match scores (%)
+    ├─→ Matched skills (green)
+    ├─→ Missing skills (red)
+    └─→ Additional skills (blue)
+```
+
+---
+
+### 3. JD Analytics Flow
+
+```
+User (Browser)
+    │
+    ├─→ Pastes Job Description
+    │
+    ↓
+Frontend (JDAnalyzer.tsx)
+    │
+    ├─→ Sends JD text
+    │
+    ↓
+POST /api/v1/jd/analyze
+    │
+    ↓
+Backend (jd_analytics.py)
+    │
+    ├─→ Extracts technologies (AWS, Python, React, etc.)
+    ├─→ Detects role type (GenAI, Cloud, DevOps)
+    ├─→ Extracts experience requirements
+    │
+    ↓
+Database (SQLite)
+    │
+    └─→ Stores JD with tech stack tags
+    │
+    ↓
+Frontend requests trends
+    │
+    ↓
+GET /api/v1/jd/trends?days=30
+    │
+    ↓
+Backend aggregates data
+    │
+    ├─→ Counts tech mentions (AWS: 15, Python: 12, etc.)
+    ├─→ Groups by category (Cloud, Programming, AI)
+    │
+    ↓
+Frontend (Recharts)
+    │
+    ├─→ Bar Chart: Top 15 technologies
+    └─→ Pie Chart: Category distribution
+```
+
+---
+
+## 🛠️ Technology Stack Details
+
+### Frontend Stack
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| React | UI Framework | 18.x |
+| TypeScript | Type Safety | 5.x |
+| Vite | Build Tool | 5.x |
+| Tailwind CSS | Styling | 3.x |
+| Recharts | Data Visualization | 2.x |
+| Axios | HTTP Client | 1.x |
+| React Router | SPA Routing | 6.x |
+| Lucide React | Icons | Latest |
+
+### Backend Stack
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| FastAPI | Web Framework | 0.104+ |
+| Python | Programming Language | 3.10+ |
+| SQLAlchemy | ORM | 2.x |
+| Pydantic | Data Validation | 2.x |
+| SQLite | Database | 3.x |
+| Uvicorn | ASGI Server | 0.24+ |
+
+### AI/ML Stack (Optional)
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| sentence-transformers | Semantic Embeddings | 2.x |
+| scikit-learn | Cosine Similarity | 1.3+ |
+| numpy | Vector Operations | 1.24+ |
+| RapidFuzz | Fuzzy Matching | 3.x |
+
+### Document Processing (Optional)
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| PyMuPDF (fitz) | PDF Parsing | 1.23+ |
+| python-docx | DOCX Parsing | 1.0+ |
+
+---
+
+## 🔐 Security & Best Practices
+
+```
+┌─────────────────────────────────────┐
+│     SECURITY LAYERS                 │
+├─────────────────────────────────────┤
+│  1. Input Validation                │
+│     └─ Pydantic models              │
+│                                     │
+│  2. File Upload Security            │
+│     ├─ File type validation         │
+│     ├─ Size limits (10MB)           │
+│     └─ Secure file naming           │
+│                                     │
+│  3. SQL Injection Protection        │
+│     └─ SQLAlchemy ORM               │
+│                                     │
+│  4. XSS Protection                  │
+│     └─ React auto-escaping          │
+│                                     │
+│  5. CORS Configuration              │
+│     └─ Allowed origins whitelist    │
+└─────────────────────────────────────┘
+```
+
+---
+
+## 📦 Deployment Architecture
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                    PRODUCTION DEPLOYMENT                        │
+├────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Frontend (Netlify/Vercel/Cloudflare Pages)                    │
+│  ├─ Static files (HTML, CSS, JS)                               │
+│  ├─ CDN distribution (fast global access)                      │
+│  └─ HTTPS enabled                                               │
+│      │                                                          │
+│      │ API Calls                                                │
+│      ↓                                                          │
+│  Backend (Render/Railway/Heroku)                                │
+│  ├─ FastAPI application                                        │
+│  ├─ SQLite database file                                       │
+│  ├─ File uploads storage                                       │
+│  └─ Auto-scaling (on paid tiers)                               │
+│                                                                 │
+│  Optional: Separate Storage                                    │
+│  └─ AWS S3 / Cloudflare R2 (for resumes)                       │
+│                                                                 │
+└────────────────────────────────────────────────────────────────┘
 ```
 
 ---
