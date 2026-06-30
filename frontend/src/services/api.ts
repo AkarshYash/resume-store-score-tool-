@@ -12,7 +12,10 @@ import type {
     Resume
 } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://resume-store-score-tool.onrender.com/api/v1";
+
+console.log("API URL:", API_BASE_URL);
 
 class ApiService {
   private client: AxiosInstance;
