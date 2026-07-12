@@ -29,7 +29,7 @@ export default function AllResumes() {
 
   const fetchAllResumes = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/v1/resumes/all/detailed')
+      const response = await axios.get('https://resume-store-score-tool.onrender.com/api/v1/resumes/all/detailed')
       setResumes(response.data)
     } catch (error) {
       console.error('Error fetching resumes:', error)
@@ -41,7 +41,7 @@ export default function AllResumes() {
   const handleDeleteResume = async (id: number) => {
     if (!confirm('Are you sure you want to delete this resume?')) return
     try {
-      await axios.delete(`http://localhost:8000/api/v1/resumes/${id}`)
+      await axios.delete(`https://resume-store-score-tool.onrender.com/api/v1/resumes/${id}`)
       fetchAllResumes()
     } catch (error) {
       console.error('Error deleting resume:', error)
@@ -254,7 +254,7 @@ export default function AllResumes() {
 
               <div className="pt-2 flex flex-wrap gap-3">
                 <a
-                  href={`http://localhost:8000/api/v1/resumes/${selectedResume.id}/file`}
+                  href={`https://resume-store-score-tool.onrender.com/api/v1/resumes/${selectedResume.id}/file`}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
@@ -263,7 +263,7 @@ export default function AllResumes() {
                   Open Resume
                 </a>
                 <a
-                  href={`http://localhost:8000/api/v1/resumes/${selectedResume.id}/file`}
+                  href={`https://resume-store-score-tool.onrender.com/api/v1/resumes/${selectedResume.id}/file`}
                   download
                   className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
                 >
@@ -288,7 +288,7 @@ export default function AllResumes() {
               </div>
               <div className="flex items-center space-x-2">
                 <a
-                  href={`http://localhost:8000/api/v1/resumes/${previewResume.id}/download`}
+                  href={`https://resume-store-score-tool.onrender.com/api/v1/resumes/${previewResume.id}/download`}
                   download
                   className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                 >
@@ -308,7 +308,7 @@ export default function AllResumes() {
             <div className="flex-1 overflow-hidden">
               {previewResume.fileType.toLowerCase() === 'pdf' ? (
                 <iframe
-                  src={`http://localhost:8000/api/v1/resumes/${previewResume.id}/file`}
+                  src={`https://resume-store-score-tool.onrender.com/api/v1/resumes/${previewResume.id}/file`}
                   className="w-full h-full border-0"
                   title="Resume Preview"
                 />
@@ -326,7 +326,7 @@ export default function AllResumes() {
                     </p>
                     <div className="space-y-3">
                       <a
-                        href={`http://localhost:8000/api/v1/resumes/${previewResume.id}/download`}
+                        href={`https://resume-store-score-tool.onrender.com/api/v1/resumes/${previewResume.id}/download`}
                         download
                         className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                       >
@@ -334,7 +334,7 @@ export default function AllResumes() {
                         <span>Download to View</span>
                       </a>
                       <a
-                        href={`http://localhost:8000/api/v1/resumes/${previewResume.id}/file`}
+                        href={`https://resume-store-score-tool.onrender.com/api/v1/resumes/${previewResume.id}/file`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
