@@ -53,14 +53,14 @@ export default function Matching() {
         const formData = new FormData()
         formData.append('file', jobFile)
         formData.append('top_n', '10')
-        response = await axios.post('http://localhost:8000/api/v1/matching/match-upload', formData, {
+        response = await axios.post('https://resume-store-score-tool.onrender.com/api/v1/matching/match-upload', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         })
       } else {
         const payload = inputMode === 'title'
           ? { job_title_only: jobTitle, top_n: 10 }
           : { job_description_text: jobDescription, top_n: 10 }
-        response = await axios.post('http://localhost:8000/api/v1/matching/match', payload)
+        response = await axios.post('https://resume-store-score-tool.onrender.com/api/v1/matching/match', payload)
       }
 
       setResults(response.data.results)
@@ -339,7 +339,7 @@ export default function Matching() {
 
               <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700 flex flex-wrap gap-3">
                 <a
-                  href={`http://localhost:8000/api/v1/resumes/${result.resume_id}/file`}
+                  href={`https://resume-store-score-tool.onrender.com/api/v1/resumes/${result.resume_id}/file`}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
@@ -348,7 +348,7 @@ export default function Matching() {
                   Open Resume
                 </a>
                 <a
-                  href={`http://localhost:8000/api/v1/resumes/${result.resume_id}/file`}
+                  href={`https://resume-store-score-tool.onrender.com/api/v1/resumes/${result.resume_id}/file`}
                   download
                   className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
                 >
