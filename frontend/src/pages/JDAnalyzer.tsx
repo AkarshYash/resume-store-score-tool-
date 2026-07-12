@@ -36,7 +36,7 @@ export default function JDAnalyzer() {
 
   const fetchTrends = async (trendDays: number) => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/v1/jd/trends?days=${trendDays}`)
+      const response = await axios.get(`https://resume-store-score-tool.onrender.com/api/v1/jd/trends?days=${trendDays}`)
       setTrends(response.data)
     } catch (err) {
       console.error('Failed to fetch JD trends:', err)
@@ -58,7 +58,7 @@ export default function JDAnalyzer() {
     setAnalysisResult(null)
 
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/jd/analyze', {
+      const response = await axios.post('https://resume-store-score-tool.onrender.com/api/v1/jd/analyze', {
         job_title: jobTitle || undefined,
         raw_text: rawText
       })
