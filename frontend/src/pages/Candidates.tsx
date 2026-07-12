@@ -54,7 +54,7 @@ export default function Candidates() {
 
   const fetchCandidates = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/v1/candidates/')
+      const response = await axios.get('https://resume-store-score-tool.onrender.com/api/v1/candidates/')
       setCandidates(response.data)
     } catch (error) {
       console.error('Error fetching candidates:', error)
@@ -65,7 +65,7 @@ export default function Candidates() {
 
   const fetchCandidateResumes = async (candidateId: number) => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/v1/candidates/${candidateId}/resumes`)
+      const response = await axios.get(`https://resume-store-score-tool.onrender.com/api/v1/candidates/${candidateId}/resumes`)
       setResumes(response.data)
     } catch (error) {
       console.error('Error fetching resumes:', error)
@@ -75,7 +75,7 @@ export default function Candidates() {
   const handleAddCandidate = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await axios.post('http://localhost:8000/api/v1/candidates/', newCandidate)
+      await axios.post('https://resume-store-score-tool.onrender.com/api/v1/candidates/', newCandidate)
       setShowAddModal(false)
       setNewCandidate({ name: '', email: '', phone: '', location: '' })
       fetchCandidates()
@@ -95,7 +95,7 @@ export default function Candidates() {
     formData.append('file', uploadForm.file)
 
     try {
-      await axios.post('http://localhost:8000/api/v1/resumes/upload', formData, {
+      await axios.post('https://resume-store-score-tool.onrender.com/api/v1/resumes/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       setShowUploadModal(false)
@@ -112,7 +112,7 @@ export default function Candidates() {
   const handleDownloadResume = async (resumeId: number, filename: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/v1/resumes/${resumeId}/download`,
+        `https://resume-store-score-tool.onrender.com/api/v1/resumes/${resumeId}/download`,
         { responseType: 'blob' }
       )
       const url = window.URL.createObjectURL(new Blob([response.data]))
@@ -136,7 +136,7 @@ export default function Candidates() {
     // Extract suggested names from filenames
     const filenames = Array.from(files).map(f => f.name)
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/resumes/extract-names', filenames)
+      const response = await axios.post('https://resume-store-score-tool.onrender.com/api/v1/resumes/extract-names', filenames)
       const suggestions = response.data
       
       const filesWithNames = Array.from(files).map((file, idx) => ({
@@ -171,7 +171,7 @@ export default function Candidates() {
       formData.append('file', item.file)
 
       try {
-        await axios.post('http://localhost:8000/api/v1/resumes/upload', formData, {
+        await axios.post('https://resume-store-score-tool.onrender.com/api/v1/resumes/upload', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         })
         successCount++
@@ -201,7 +201,7 @@ export default function Candidates() {
   const handleDeleteCandidate = async (id: number) => {
     if (!confirm('Are you sure you want to delete this candidate and all their resumes?')) return
     try {
-      await axios.delete(`http://localhost:8000/api/v1/candidates/${id}`)
+      await axios.delete(`https://resume-store-score-tool.onrender.com/api/v1/candidates/${id}`)
       fetchCandidates()
       setSelectedCandidate(null)
     } catch (error) {
@@ -710,7 +710,7 @@ export default function Candidates() {
             <div className="flex-1 overflow-hidden">
               {previewResume.fileType.toLowerCase() === 'pdf' ? (
                 <iframe
-                  src={`http://localhost:8000/api/v1/resumes/${previewResume.id}/file`}
+                  src={`https://resume-store-score-tool.onrender.com/api/v1/resumes/${previewResume.id}/file`}
                   className="w-full h-full border-0"
                   title="Resume Preview"
                 />
@@ -735,7 +735,7 @@ export default function Candidates() {
                         <span>Download to View</span>
                       </button>
                       <a
-                        href={`http://localhost:8000/api/v1/resumes/${previewResume.id}/file`}
+                        href={`https://resume-store-score-tool.onrender.com/api/v1/resumes/${previewResume.id}/file`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full flex items-center justify-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
