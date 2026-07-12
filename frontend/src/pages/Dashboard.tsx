@@ -22,7 +22,7 @@ export default function Dashboard() {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/v1/analytics/dashboard')
+      const response = await axios.get('https://resume-store-score-tool.onrender.com/api/v1/analytics/dashboard')
       setStats(response.data)
       setError(null)
     } catch (error) {
