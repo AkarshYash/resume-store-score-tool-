@@ -23,7 +23,7 @@ export default function Analytics() {
 
   const fetchAnalytics = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/v1/analytics/technologies')
+      const response = await axios.get('https://resume-store-score-tool.onrender.com/api/v1/analytics/technologies')
       setTechStats(response.data)
     } catch (error) {
       console.error('Error fetching analytics:', error)
